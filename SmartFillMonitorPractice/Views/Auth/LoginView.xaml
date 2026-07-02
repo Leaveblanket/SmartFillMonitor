@@ -1,0 +1,141 @@
+<UserControl x:Class="SmartFillMonitor.Views.Auth.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:extensions="clr-namespace:SmartFillMonitor.Extensions"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             x:Name="Root" d:DesignHeight="600" d:DesignWidth="850"
+             mc:Ignorable="d">
+    <Border Background="{StaticResource DarkBg}"
+            BorderBrush="#333" BorderThickness="1" CornerRadius="10">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="IsEnabled" Value="True" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                        <Setter Property="IsEnabled" Value="False" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="20" Opacity="0.4" ShadowDepth="0" />
+        </Border.Effect>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.2*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" CornerRadius="10,0,0,10">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Offset="0" Color="#004e92" />
+                        <GradientStop Offset="1" Color="#000428" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Path Height="60"
+                          Data="M10,20 L20,5 L30,20 L40,5 L50,20 L50,40 L10,40 Z"
+                          Fill="White" Opacity="0.8" Stretch="Uniform" />
+                    <TextBlock Margin="0,20,0,5" HorizontalAlignment="Center" FontSize="24"
+                               Foreground="White" Text="SmartFill Monitor Practice" />
+                    <TextBlock HorizontalAlignment="Center" FontSize="14"
+                               Foreground="#AACCEE" Text="智能灌装监控练习系统" />
+                </StackPanel>
+            </Border>
+
+            <Grid Grid.Column="1" Background="{StaticResource CardBg}">
+                <StackPanel Margin="40,0" VerticalAlignment="Center">
+                    <TextBlock Margin="0,0,0,24" FontSize="22" FontWeight="Bold"
+                               Foreground="White" Text="欢迎登录" />
+
+                    <TextBlock x:Name="HintTextBlock" Margin="0,0,0,10" FontSize="12"
+                               Foreground="#77C6FF"
+                               Text="{Binding HintText}"
+                               TextWrapping="Wrap" />
+
+                    <TextBlock x:Name="NoUsersHintTextBlock" Margin="0,0,0,16"
+                               FontSize="12" Foreground="#FFD166" Text="当前暂无用户，请先注册。"
+                               TextWrapping="Wrap"
+                               Visibility="{Binding NoUsersVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                    <TextBlock Margin="0,0,0,5" FontSize="14"
+                               Foreground="{StaticResource TextDim}"
+                               Text="用户名" />
+                    <Border Style="{StaticResource LoginInputBorderStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Path Height="16" HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Data="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"
+                                  Fill="{StaticResource TextDim}"
+                                  Stretch="Uniform" Stroke="#AAAAAA" StrokeThickness="2" />
+                            <ComboBox x:Name="UserNameCombo" Grid.Column="1" Height="38"
+                                      VerticalContentAlignment="Center" Background="Transparent"
+                                      BorderThickness="0" DisplayMemberPath="UserName"
+                                      FontSize="14" Foreground="Black" IsEditable="True"
+                                      IsTextSearchEnabled="True"
+                                      ItemsSource="{Binding Users}"
+                                      Text="{Binding UserNameText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      TextSearch.TextPath="UserName" />
+                        </Grid>
+                    </Border>
+
+                    <TextBlock Margin="2,0,0,5" FontSize="14"
+                               Foreground="{StaticResource TextDim}"
+                               Text="密码" />
+                    <Border Style="{StaticResource LoginInputBorderStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Path Height="16" HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Data="M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8A2,2 0 0,1 20,10V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V10C4,8.89 4.9,8 6,8H7V6A5,5 0 0,1 12,1A5,5 0 0,1 17,6V8H18M12,3A3,3 0 0,0 9,6V8H15V6A3,3 0 0,0 12,3Z"
+                                  Fill="{StaticResource TextDim}"
+                                  Stretch="Uniform" Stroke="#AAAAAA" StrokeThickness="2" />
+                            <PasswordBox x:Name="PasswordBox" Grid.Column="1"
+                                         VerticalContentAlignment="Center"
+                                         extensions:PasswordBoxExtension.BoundPassword="{Binding Password, Mode=TwoWay}"
+                                         extensions:PasswordBoxCapsLockExtension.HintTarget="{Binding ElementName=PasswordCapsLockHintTextBlock}"
+                                         Background="Transparent" BorderThickness="0"
+                                         CaretBrush="White" FontSize="14" Foreground="White"
+                                         />
+                        </Grid>
+                    </Border>
+                    <TextBlock x:Name="PasswordCapsLockHintTextBlock" Margin="0,-10,4,10"
+                               HorizontalAlignment="Right" FontSize="11"
+                               Foreground="#FFD166" Text="大写锁定已打开" Visibility="Hidden" />
+
+                    <Button Height="45" Margin="0,12,0,12"
+                            Background="{StaticResource PrimaryBlue}"
+                            Command="{Binding LoginCommand}"
+                            Content="立即登录" IsDefault="True"
+                            Style="{StaticResource MordenBtnStyle}">
+                        <Button.Effect>
+                            <DropShadowEffect BlurRadius="5" Opacity="0.3" ShadowDepth="2"
+                                              Color="Black" />
+                        </Button.Effect>
+                    </Button>
+
+                    <Button Height="40" Margin="0,0,0,15" Background="#3A3A4F"
+                            Command="{Binding RequestRegisterCommand}"
+                            Content="注册"
+                            Style="{StaticResource MordenBtnStyle}" />
+
+                    <Button x:Name="CancelButton" Background="Transparent"
+                            BorderThickness="0"
+                            Command="{Binding CancelCommand}"
+                            Content="退出系统" Cursor="Hand"
+                            Foreground="{StaticResource TextDim}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

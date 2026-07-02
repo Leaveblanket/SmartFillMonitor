@@ -1,0 +1,31 @@
+name: Deploy
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Publish
+        run: dotnet publish SmartFillMonitorPractice/SmartFillMonitor.csproj -c Release -o publish
+
+      - name: Package
+        run: Compress-Archive -Path publish/* -DestinationPath SmartFillMonitor-${{ github.ref_name }}.zip
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: SmartFillMonitor-${{ github.ref_name }}.zip
+          generate_release_notes: true

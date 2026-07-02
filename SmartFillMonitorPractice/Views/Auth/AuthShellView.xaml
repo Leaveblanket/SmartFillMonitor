@@ -1,0 +1,46 @@
+<Window x:Class="SmartFillMonitor.Views.Auth.AuthShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:auth="clr-namespace:SmartFillMonitor.ViewModels.Auth"
+        xmlns:views="clr-namespace:SmartFillMonitor.Views.Auth"
+        mc:Ignorable="d"
+        Title="身份认证"
+        Height="600"
+        Width="840"
+        MinHeight="560"
+        MinWidth="820"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type auth:LoginViewModel}">
+            <views:LoginView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type auth:RegisterViewModel}">
+            <views:RegisterView />
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <ContentControl Content="{Binding CurrentContent}" />
+
+        <Border Height="44"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                Panel.ZIndex="900"
+                MouseLeftButtonDown="OnWindowMouseLeftButtonDown" />
+
+        <Button Style="{StaticResource CloseBtnStyle}"
+                Width="20"
+                Height="30"
+                Margin="0,14,16,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Panel.ZIndex="1000"
+                Click="OnShellCloseButtonClick" />
+    </Grid>
+</Window>

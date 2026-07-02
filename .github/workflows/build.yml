@@ -1,0 +1,46 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Cache NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: ${{ runner.os }}-nuget-
+
+      - name: Restore
+        run: dotnet restore SmartFillMonitor.slnx
+
+      - name: Build
+        run: dotnet build SmartFillMonitor.slnx -c Release --no-restore
+
+      - name: Test with Coverage
+        run: dotnet test Tests/SmartFillMonitor.Tests.csproj -c Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+
+      - name: Coverage Gate
+        shell: pwsh
+        run: |
+          $coverageFile = Get-ChildItem -Path ./coverage -Filter "coverage.cobertura.xml" -Recurse | Select-Object -First 1
+          if (-not $coverageFile) { Write-Error "Coverage file not found"; exit 1 }
+          [xml]$xml = Get-Content $coverageFile.FullName
+          $rate = [double]$xml.coverage.'line-rate'
+          $pct = [math]::Round($rate * 100, 2)
+          Write-Host "Line coverage: $pct%"
+          if ($pct -lt 60) { Write-Error "Coverage $pct% is below 60% threshold"; exit 1 }
